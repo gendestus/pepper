@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template
 from openai import OpenAI
 import os
+import pyodbc
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -11,6 +12,37 @@ with open("/app/app/system.txt", "r", encoding="utf-8") as system_prompt_file:
     system_prompt = system_prompt_file.read()
 
 
+
+
+
+def call_stored_procedure(proc_name, params=None, fetch_results=False):
+    db_host = os.getenv("DB_HOST", "localhost")
+    db_name = os.getenv("DB_NAME")
+    db_user = os.getenv("DB_USER")
+    db_password = os.getenv("DB_PASSWORD")
+    conn_string = f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={db_host};DATABASE={db_name};UID={db_user};PWD={db_password}"
+    try:
+        with pyodbc.connect(conn_string) as conn:
+            cursor = conn.cursor()
+            if params:
+                placeholders = ", ".join([f"@{key}=?" for key in params])
+                values = list(params.values())
+                sql = f"EXEC {proc_name} {placeholders}"
+            else:
+                sql = f"EXEC {proc_name}"
+                values = []
+            cursor.execute(sql, values)
+            if fetch_results:
+                results = cursor.fetchall()
+                columns = [column[0] for column in cursor.description]
+                return [dict(zip(columns, row)) for row in results]
+
+            conn.commit()
+
+    except pyodbc.Error as e:
+        print(f"Error calling stored procedure '{proc_name}': {e}")
+        return None
+    
 def generate_response(system_message: str, user_message: str) -> str:
     oai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -64,3 +96,7 @@ def index():
         # response = completion["choices"][0]["message"]["content"]
 
     return render_template("index.html")
+@app.route("/todos", methods=["GET"])
+def get_todos():
+    open_items = call_stored_procedure("GetOpenItems", fetch_results=True)
+    return {"todos": open_items}

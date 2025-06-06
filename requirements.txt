@@ -1,3 +1,4 @@
 openai
 flask
 python-dotenv
+pyodbc==4.0.34
