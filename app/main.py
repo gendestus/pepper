@@ -113,7 +113,7 @@ def get_items():
     open_items = call_stored_procedure("GetOpenItems", fetch_results=True)
     item_messages = []
     for item in open_items:
-        item_message = f"{item['item']} ({generate_creation_message(item['created'])})"
+        item_message = f"{item['item']}"
         item_messages.append(item_message)
     return {"items": item_messages}
 

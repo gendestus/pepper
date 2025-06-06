@@ -66,6 +66,7 @@ async function addItem() {
         }
         const result = await response.json();
         console.log('Response from server:', result);
+        itemInput.value = ""; // Clear the input field
         showPriority();
     } catch (error) {
         console.error('Error during POST request:', error);
