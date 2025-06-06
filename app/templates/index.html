@@ -5,17 +5,18 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
   <link href="{{ url_for('static', filename='css/fontawesome.css') }}" rel="stylesheet" />
   <link href="{{ url_for('static', filename='css/solid.css') }}" rel="stylesheet" />
+  <script src="{{ url_for('static', filename='index.js') }}"></script>
 </head>
 <body>
   <div id="corner_buttons">
-    <a href="#"><i class="fa-solid fa-magnifying-glass"></i></a>
-    <a href="#"><i class="fa-solid fa-plus"></i></a>
+    <a href="#" onclick="showViewList()"><i class="fa-solid fa-magnifying-glass"></i></a>
+    <a href="#" onclick="showNewItem()"><i class="fa-solid fa-plus"></i></a>
   </div>
   <div></div>
   <div id="prioritize_container" class="container">
     <form>
-      <label for="time_avaiable" id="time_avaiable_label">Time Available:</label><br>
-      <select id="time_avaiable" name="time_avaiable">
+      <label for="time_available" id="time_available_label">Time Available:</label><br>
+      <select id="time_available" name="time_available">
         <option value="5">5 minutes</option>
         <option value="10">10 minutes</option>
         <option value="15">15 minutes</option>
@@ -24,11 +25,11 @@
       </select><br><br>
       <label for="user_message" id="user_message_label">User Message (optional):</label><br>
       <textarea id="user_message" name="user_message" placeholder="e.g., I have 10 minutes...what can I do right now?"></textarea><br>
-      <button type="button" id="prioritize_button">Prioritize</button>
+      <button type="button" id="prioritize_button" onclick="fetchPriority(data={'time_available':document.getElementById('time_available').options[document.getElementById('time_available').selectedIndex].text, 'user_message':document.getElementById('user_message').value})">Prioritize</button>
     </form>
   </div>
   <div id="new_item_container" class="container hidden">
-    <a href="#" class="close_button"><i class="fa-solid fa-xmark"></i></a>
+    <a href="#" class="close_button" onclick="window.location.reload()"><i class="fa-solid fa-xmark"></i></a>
     <form>
       <label for="new_item">New Item:</label><br>
       <input type="text" id="new_item" name="new_item" placeholder="e.g., Buy groceries"><br>
@@ -36,11 +37,15 @@
     </form>
   </div>
   <div id="view_list_container" class="container hidden">
-    <a href="#" class="close_button"><i class="fa-solid fa-xmark"></i></a>
+    <a href="#" class="close_button" onclick="window.location.reload()"><i class="fa-solid fa-xmark"></i></a>
     <h2>Todo List</h2>
     <ul id="todo_list">
       <!-- Todo items will be dynamically added here -->
     </ul>
+  </div>
+  <div id="response_container" class="container hidden">
+    <p id="response_text">Response from LLM will appear here.</p>
+    <button type="button" id="close_response_button" onclick="window.location.reload()">Close</button>
   </div>
 </body>
 </html>
