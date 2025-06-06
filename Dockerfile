@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM laudio/pyodbc:3.0.0
 
 WORKDIR /app
 COPY . /app

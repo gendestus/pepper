@@ -13,8 +13,11 @@
     <a href="#" onclick="showNewItem()"><i class="fa-solid fa-plus"></i></a>
   </div>
   <div></div>
+  <div id="loading_container" class="container hidden">
+    <img src="{{ url_for('static', filename='loading.gif') }}" id="loading_container_gif">
+  </div>
   <div id="prioritize_container" class="container">
-    <form>
+    <form id="prioritize_form">
       <label for="time_available" id="time_available_label">Time Available:</label><br>
       <select id="time_available" name="time_available">
         <option value="5">5 minutes</option>
@@ -33,12 +36,16 @@
     <form>
       <label for="new_item">New Item:</label><br>
       <input type="text" id="new_item" name="new_item" placeholder="e.g., Buy groceries"><br>
-      <button type="button" id="add_item_button">Add Item</button>
+      <button type="button" id="add_item_button" onclick="addItem();">Add Item</button>
     </form>
   </div>
   <div id="view_list_container" class="container hidden">
     <a href="#" class="close_button" onclick="window.location.reload()"><i class="fa-solid fa-xmark"></i></a>
     <h2>Todo List</h2>
+    <br>
+    <div id="loading">
+      <img src="{{ url_for('static', filename='loading.gif') }}" id="loading_gif">
+    </div>
     <ul id="todo_list">
       <!-- Todo items will be dynamically added here -->
     </ul>
