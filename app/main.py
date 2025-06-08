@@ -76,7 +76,7 @@ def priority():
     if request.method == "POST":
         data = request.get_json()
         # To be filled in later by a database call
-        tasks = call_stored_procedure("GetOpenItems", fetch_results=True)
+        tasks = call_stored_procedure("sp_get_open_items", fetch_results=True)
 
         time_available = data.get('time_available', '')
         user_message = data.get('user_message', '')
@@ -110,10 +110,10 @@ def index():
     return render_template("index.html")
 @app.route("/items", methods=["GET"])
 def get_items():
-    open_items = call_stored_procedure("GetOpenItems", fetch_results=True)
+    open_items = call_stored_procedure("sp_get_open_items", fetch_results=True)
     item_messages = []
     for item in open_items:
-        item_message = f"{item['item']}"
+        item_message = f"{item['item_text']}"
         item_messages.append(item_message)
     return {"items": item_messages}
 
@@ -124,6 +124,6 @@ def add_item():
     if not item_name:
         return {"error": "Item name is required"}, 400
 
-    params = {"item": item_name}
-    call_stored_procedure("AddItem", params=params)
+    params = {"item_text": item_name}
+    call_stored_procedure("sp_add_item", params=params)
     return {"message": "Item added successfully"}, 201

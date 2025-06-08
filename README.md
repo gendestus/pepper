@@ -16,3 +16,4 @@ The steps here are temporary so I can get back to normal work in the meantime
     DB_USER={your db user}
     DB_PASSWORD={your db password}
 4) If you are intending to serve this somewhere other than your local machine, edit index.js to point the API_BASE_URL at wherever the api will be hosted
+5) Run the SQL files in the sql directory against whatever database you plan on using. It should work no matter the flavor of DB but if you run into problems, chatGPT is your friend.
