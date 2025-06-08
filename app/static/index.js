@@ -20,7 +20,12 @@ async function closeItem(item_id) {
     showViewList();
 }
 
-async function fetchPriority(data = {}) {
+async function fetchPriority() {
+    data = {
+        'time_available':document.getElementById('time_available').options[document.getElementById('time_available').selectedIndex].text, 
+        'user_message':document.getElementById('user_message').value,
+        'personality':document.getElementById('personality').options[document.getElementById('personality').selectedIndex].text
+    }
     try {
         showLoading();
         const response = await fetch(API_BASE_URL + "priority", {

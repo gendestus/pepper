@@ -26,10 +26,16 @@
         <option value="15">15 minutes</option>
         <option value="30">30 minutes</option>
         <option value="60">1 hour</option>
-      </select><br><br>
+      </select><br>
+      <label for="personality" id="personality_label">Personality:</label><br>
+      <select id="personality" name="personality">
+        {% for personality in personalities %}
+            <option value="{{ personality }}">{{ personality }}</option>
+        {% endfor %}
+      </select><br>
       <label for="user_message" id="user_message_label">User Message (optional):</label><br>
       <textarea id="user_message" name="user_message" placeholder="e.g., I have 10 minutes...what can I do right now?"></textarea><br>
-      <button type="button" id="prioritize_button" onclick="fetchPriority(data={'time_available':document.getElementById('time_available').options[document.getElementById('time_available').selectedIndex].text, 'user_message':document.getElementById('user_message').value})">Prioritize</button>
+      <button type="button" id="prioritize_button" onclick="fetchPriority()">Prioritize</button>
     </form>
   </div>
   <div id="new_item_container" class="container hidden">

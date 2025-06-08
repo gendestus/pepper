@@ -10,6 +10,14 @@ app = Flask(__name__)
 todos = []
 
 GRUFF_PERSONALITY = "gruff"
+INSULTING_PERSONALITY = "insulting"
+COMPASSIONATE_PERSONALITY = "compassionate"
+
+PERSONALITIES = [
+    GRUFF_PERSONALITY,
+    INSULTING_PERSONALITY,
+    COMPASSIONATE_PERSONALITY
+]
 
 def build_system_prompt(personality: str) -> str:
     with open("/app/app/prompts/system.txt", "r", encoding="utf-8") as system_prompt_file:
@@ -17,11 +25,11 @@ def build_system_prompt(personality: str) -> str:
     with open("/app/app/prompts/user.txt", "r", encoding="utf-8") as user_prompt_file:
         user_description = user_prompt_file.read()
 
-    if personality == GRUFF_PERSONALITY:
-        with open("/app/app/prompts/personalities/gruff.txt", "r", encoding="utf-8") as gruff_prompt_file:
-            personality_description = gruff_prompt_file.read()
-    else:
+    if personality != GRUFF_PERSONALITY and personality != INSULTING_PERSONALITY and personality != COMPASSIONATE_PERSONALITY:
         raise ValueError(f"Unknown personality: {personality}")
+    
+    with open(f"/app/app/prompts/personalities/{personality}.txt", "r", encoding="utf-8") as personality_prompt_file:
+        personality_description = personality_prompt_file.read()
     
     return system_prompt_template.replace("{{USER}}", user_description).replace("{{PERSONALITY}}", personality_description)
     
@@ -90,6 +98,7 @@ def priority():
 
         time_available = data.get('time_available', '')
         user_message = data.get('user_message', '')
+        personality = data.get('personality', GRUFF_PERSONALITY)
         
         tasks_prompt = "Tasks:\n"
         for task in tasks:
@@ -100,7 +109,7 @@ def priority():
         if user_message:
             tasks_prompt += f"User message: {user_message}\n"
         
-        return generate_response(build_system_prompt(GRUFF_PERSONALITY), tasks_prompt)
+        return generate_response(build_system_prompt(personality), tasks_prompt)
         #return tasks_prompt
 
     return "Method not allowed", 405
@@ -118,7 +127,7 @@ def index():
         # )
         # response = completion["choices"][0]["message"]["content"]
 
-    return render_template("index.html")
+    return render_template("index.html", personalities=PERSONALITIES)
 @app.route("/items", methods=["GET"])
 def get_items():
     open_items = call_stored_procedure("sp_get_open_items", fetch_results=True)
