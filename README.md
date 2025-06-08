@@ -21,4 +21,4 @@ The steps here are temporary so I can get back to normal work in the meantime
 ## Extra Credit
 If you want to edit the personality prompts, either create a new one or change what's in prompts/personalities/. Creating a new one will require making edits to main.py to incorporate the new file locations.
 
-Also, this app uses a user profile to customize suggestions. Edit the user.txt file to describe the user in order to fine tune things to your use case
+Also, this app uses a user profile to customize suggestions. Edit the user.txt file to describe the user in order to fine tune things to your use case.
