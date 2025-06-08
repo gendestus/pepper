@@ -75,7 +75,6 @@ def generate_creation_message(dt_created: datetime.datetime) -> str:
 def priority():
     if request.method == "POST":
         data = request.get_json()
-        # To be filled in later by a database call
         tasks = call_stored_procedure("sp_get_open_items", fetch_results=True)
 
         time_available = data.get('time_available', '')
@@ -83,7 +82,7 @@ def priority():
         
         tasks_prompt = "Tasks:\n"
         for task in tasks:
-            tasks_prompt += f"- {task['item']} ({generate_creation_message(task['created'])}) \n"
+            tasks_prompt += f"- {task['item_text']} ({generate_creation_message(task['created'])}) \n"
         if not tasks:
             tasks_prompt += "No tasks right now.\n"
         tasks_prompt += f"Time available: {time_available}\n"
@@ -111,11 +110,16 @@ def index():
 @app.route("/items", methods=["GET"])
 def get_items():
     open_items = call_stored_procedure("sp_get_open_items", fetch_results=True)
-    item_messages = []
+    items = []
     for item in open_items:
-        item_message = f"{item['item_text']}"
-        item_messages.append(item_message)
-    return {"items": item_messages}
+        # item_message = f"{item['item_text']}"
+        # item_messages.append(item_message)
+        item = {
+            "item_text": item["item_text"],
+            "item_id": item["item_id"]
+        }
+        items.append(item)
+    return {"items": items}, 200
 
 @app.route("/add_item", methods=["POST"])
 def add_item():
@@ -127,3 +131,14 @@ def add_item():
     params = {"item_text": item_name}
     call_stored_procedure("sp_add_item", params=params)
     return {"message": "Item added successfully"}, 201
+
+@app.route("/close_item", methods=["POST"])
+def close_item():
+    data = request.get_json()
+    item_id = data.get("item_id")
+    if not item_id:
+        return {"error": "Item ID is required"}, 400
+
+    params = {"item_id": item_id}
+    call_stored_procedure("sp_close_item", params=params)
+    return {"message": "Item closed successfully"}, 200

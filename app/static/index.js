@@ -1,5 +1,25 @@
 const API_BASE_URL = "http://localhost:5000/"
 
+async function closeItem(item_id) {
+    const data = {
+        "item_id": item_id
+    }
+
+    const response = await fetch(API_BASE_URL + "close_item", {
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": JSON.stringify(data)
+    });
+    if (!response.ok) {
+        console.error(`HTTP error! Status: ${response.status}`);
+        return;
+    }
+    console.log('Item ' + item_id + 'closed successfully');
+    showViewList();
+}
+
 async function fetchPriority(data = {}) {
     try {
         showLoading();
@@ -121,7 +141,8 @@ async function showViewList() {
     }
     items_data["items"].forEach(element => {
         const li = document.createElement("li");
-        li.textContent = element;
+        li.textContent = element.item_text;
+        li.innerHTML += "&nbsp;<a href=\"#\" onclick=\"closeItem('" + element.item_id + "');\">close</a>"
         todoList.appendChild(li);
     });
     document.getElementById("loading").classList.add("hidden");
