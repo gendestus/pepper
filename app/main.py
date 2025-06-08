@@ -9,11 +9,22 @@ load_dotenv()
 app = Flask(__name__)
 todos = []
 
-with open("/app/app/system.txt", "r", encoding="utf-8") as system_prompt_file:
-    system_prompt = system_prompt_file.read()
+GRUFF_PERSONALITY = "gruff"
 
+def build_system_prompt(personality: str) -> str:
+    with open("/app/app/prompts/system.txt", "r", encoding="utf-8") as system_prompt_file:
+        system_prompt_template = system_prompt_file.read()
+    with open("/app/app/prompts/user.txt", "r", encoding="utf-8") as user_prompt_file:
+        user_description = user_prompt_file.read()
 
-
+    if personality == GRUFF_PERSONALITY:
+        with open("/app/app/prompts/personalities/gruff.txt", "r", encoding="utf-8") as gruff_prompt_file:
+            personality_description = gruff_prompt_file.read()
+    else:
+        raise ValueError(f"Unknown personality: {personality}")
+    
+    return system_prompt_template.replace("{{USER}}", user_description).replace("{{PERSONALITY}}", personality_description)
+    
 
 
 def call_stored_procedure(proc_name, params=None, fetch_results=False):
@@ -88,7 +99,8 @@ def priority():
         tasks_prompt += f"Time available: {time_available}\n"
         if user_message:
             tasks_prompt += f"User message: {user_message}\n"
-        return generate_response(system_prompt, tasks_prompt)
+        
+        return generate_response(build_system_prompt(GRUFF_PERSONALITY), tasks_prompt)
         #return tasks_prompt
 
     return "Method not allowed", 405
